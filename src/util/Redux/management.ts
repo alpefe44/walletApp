@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { RootState } from './store'
 
 
@@ -24,6 +25,7 @@ export const ManagementSlice = createSlice({
                 newArr.push(action.payload)
                 state.items = [...newArr];
             }
+            //AsyncStorage.setItem("mywallet", JSON.stringify(state.items))
 
         },
 
@@ -31,6 +33,7 @@ export const ManagementSlice = createSlice({
             const { name } = action.payload;
             const newArr = state.items.filter((item) => item.name !== name)
             state.items = newArr
+            //AsyncStorage.setItem("mywallet", JSON.stringify(state.items))
         }
     }
 })
@@ -38,7 +41,7 @@ export const ManagementSlice = createSlice({
 
 
 
-export const { addItem , deleteItem} = ManagementSlice.actions;
+export const { addItem, deleteItem } = ManagementSlice.actions;
 
 export const managementState = (state: RootState) => state.management.items
 

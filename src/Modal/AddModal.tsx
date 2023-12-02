@@ -6,8 +6,6 @@ import { launchImageLibrary } from 'react-native-image-picker'
 import data from '../data/data';
 
 
-
-
 type Props = {
     isVisible: boolean,
     setIsVisible: (param: boolean) => void
