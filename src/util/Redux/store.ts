@@ -1,12 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import ManagementSlice from "./management";
 import PriceManagement from "./pricemanagement";
-
+import dataReducer from './dataSlice'
 
 export const store = configureStore({
     reducer: {
         management: ManagementSlice,
-        PriceManagement: PriceManagement
+        PriceManagement: PriceManagement,
+        data: dataReducer,
     },
 })
 

@@ -25,7 +25,6 @@ export const ManagementSlice = createSlice({
                 newArr.push(action.payload)
                 state.items = [...newArr];
             }
-            //AsyncStorage.setItem("mywallet", JSON.stringify(state.items))
 
         },
 
@@ -33,7 +32,6 @@ export const ManagementSlice = createSlice({
             const { name } = action.payload;
             const newArr = state.items.filter((item) => item.name !== name)
             state.items = newArr
-            //AsyncStorage.setItem("mywallet", JSON.stringify(state.items))
         }
     }
 })

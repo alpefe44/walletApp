@@ -4,6 +4,8 @@ import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Entypo'
 import { launchImageLibrary } from 'react-native-image-picker'
 import data from '../data/data';
+import { useAppSelector, useAppDispatch } from '../util/Redux/hook'
+import { addData } from '../util/Redux/dataSlice';
 
 
 type Props = {
@@ -15,6 +17,9 @@ type Props = {
 const { height, width } = Dimensions.get('window');
 
 const AddModal = (props: Props) => {
+
+    const dispatch = useAppDispatch();
+    const dataList = useAppSelector((state) => state.data.data);
 
     const [nameValue, setNameValue] = useState<string>("")
     const [priceValue, setPriceValue] = useState<string>("")
@@ -43,27 +48,31 @@ const AddModal = (props: Props) => {
                     </View>
                 </View>
                 {
-                    priceValue != "0" && selectedImage && nameValue.trim() !== "" ? <Button title="Kaydet" onPress={() => {
+                    priceValue != "" && nameValue.trim() !== "" ? <Button title="Kaydet" onPress={() => {
                         const numericPrice = parseInt(priceValue)
 
-                        data.filter((item) => {
-                            if (item.name === nameValue) {
-                                Alert.alert("Aynı Şeyi Ekleyemezsin")
-                            }
+                        const hasDuplicate = dataList.some(
+                            (item) => item.name.toLowerCase() === nameValue.toLowerCase()
+                        );
 
-                            return item.name !== nameValue
+                        if (hasDuplicate) {
+                            Alert.alert('Aynı Şeyi Ekleyemezsin');
+                        } else {
+                            // Redux store'u kullanarak veriyi güncelle
+                            dispatch(
+                                addData({
+                                    name: nameValue,
+                                    price: numericPrice,
+                                    image: selectedImage ? selectedImage : "https://p1.hiclipart.com/preview/658/470/455/krzp-dock-icons-v-1-2-empty-grey-empty-text-png-clipart.jpg",
+                                })
+                            );
 
-                        }).push({
-                            name: nameValue,
-                            price: numericPrice,
-                            image: selectedImage
-                        })
-
-                        setNameValue("")
-                        setPriceValue("")
-                        setSelectedImage(null)
-
-                        props.setIsVisible(false);
+                            setNameValue('');
+                            setPriceValue('');
+                            setSelectedImage(null);
+                            console.log(dataList);
+                            props.setIsVisible(false);
+                        }
                     }}></Button> : null
                 }
 

@@ -25,5 +25,4 @@ export const priceManagementSlice = createSlice({
 
 
 export const { editPrice } = priceManagementSlice.actions;
-export const priceManagement = (state: RootState) => state.management.items
 export default priceManagementSlice.reducer;

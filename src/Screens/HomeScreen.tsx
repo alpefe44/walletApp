@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/Entypo'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
@@ -21,26 +21,15 @@ const HomeScreen = (props: Props) => {
 
     var totalPrice: number = 0;
 
-    // const [wallet , setWallet] = useState<Array<object>>([])
 
 
-    // const getArray = async () => {
-    //     try {
-    //         const jsonValue = await AsyncStorage.getItem("mywallet");
-    //         if (jsonValue !== null) {
-    //             setWallet(JSON.parse(jsonValue));
-    //             console.log(wallet)
-    //         } else {
-    //             console.log('Belirtilen anahtarda dizi bulunamadı.');
-
-    //         }
-    //     } catch (error) {
-    //         console.error('Dizi alma hatası:', error);
-    //     }
-    // }
+    const [click, setClick] = React.useState<string>("wallet");
+    const [visible, setVisible] = React.useState<boolean>(false)
+    const [visible2, setVisible2] = React.useState<boolean>(false)
+    const [textInputValue, setTextInputValue] = React.useState<string>("")
 
 
-
+    const dataList = useAppSelector((state) => state.data.data);
     const price = useAppSelector((state) => state.PriceManagement.price)
     const wallet = useAppSelector((state) => state.management.items);
     const walletNames = useAppSelector((state) => state.management.items).map((item) => {
@@ -50,12 +39,6 @@ const HomeScreen = (props: Props) => {
         return item.price
     })
 
-    const [click, setClick] = React.useState<string>("wallet");
-    const [visible, setVisible] = React.useState<boolean>(false)
-    const [visible2, setVisible2] = React.useState<boolean>(false)
-    const [textInputValue, setTextInputValue] = React.useState<string>("")
-
-
 
     function WalletScreen() {
         return (
@@ -63,7 +46,7 @@ const HomeScreen = (props: Props) => {
             <ScrollView showsVerticalScrollIndicator={false} style={walletScreen.container}>
 
                 {
-                    wallet.map((item, index) => <WalletItem key={index} isItem={false} item={item}></WalletItem>)
+                    wallet.map((item: any, index: any) => <WalletItem key={index} isItem={false} item={item}></WalletItem>)
                 }
 
 
@@ -77,7 +60,7 @@ const HomeScreen = (props: Props) => {
         return (
             <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                 {
-                    data.map((item) => <WalletItem key={item.name} isItem={true} enabledItems={walletNames} item={item}></WalletItem>)
+                    dataList.map((item) => <WalletItem key={item.name} isItem={true} enabledItems={walletNames} item={item}></WalletItem>)
                 }
             </ScrollView>
         )
