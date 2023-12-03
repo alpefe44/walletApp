@@ -20,6 +20,7 @@ const AddModal = (props: Props) => {
 
     const dispatch = useAppDispatch();
     const dataList = useAppSelector((state) => state.data.data);
+    console.log(dataList)
 
     const [nameValue, setNameValue] = useState<string>("")
     const [priceValue, setPriceValue] = useState<string>("")

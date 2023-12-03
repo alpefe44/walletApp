@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import ManagementSlice from "./management";
 import PriceManagement from "./pricemanagement";
 import dataReducer from './dataSlice'
+import userSlice from "./userSlice";
 
 export const store = configureStore({
     reducer: {
         management: ManagementSlice,
         PriceManagement: PriceManagement,
         data: dataReducer,
+        profile: userSlice
     },
 })
 

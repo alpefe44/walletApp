@@ -3,6 +3,9 @@ import React from 'react'
 import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CustomButton from '../Components/CustomButton/CustomButton';
+import { fetchLogin } from '../util/DatabaseActions/databaseactions';
+import { useAppDispatch, useAppSelector } from '../util/Redux/hook';
+import { addUser } from '../util/Redux/userSlice';
 
 
 type Props = {}
@@ -12,21 +15,35 @@ const { width, height } = Dimensions.get('window');
 const LoginScreen = (props: Props) => {
 
     const [page, setPage] = React.useState(0);
+    const [data, setData] = React.useState<object>({})
+    const dispatch = useAppDispatch();
+    const user = useAppSelector((state) => state.profile.profile);
 
-    React.useEffect(() => console.log("1"))
 
     const LoginPage = () => {
 
-        function handleSubmit(values: any) {
+        async function handleSubmit(values: any) {
 
+            const response = await fetchLogin({
+                username: values.username,
+                password: values.password
+            })
+
+            if (response) {
+                setData(response)
+                dispatch(addUser(response))
+            }
         }
 
-        React.useEffect(() => console.log("yarak"))
+
+        React.useEffect(() => {
+            console.log(data, "data")
+            console.log(user , "user")
+        }, [data , user])
+
 
         const [tetik, setTetik] = React.useState(false);
         const [tetik2, setTetik2] = React.useState(false)
-
-        console.log(tetik)
 
         const handleFocus = (val: number) => {
             if (val === 1)
@@ -49,13 +66,13 @@ const LoginScreen = (props: Props) => {
         return (
             <View style={{ height: height * .4 }}>
                 <Formik
-                    initialValues={{ email: "", password: "" }}
+                    initialValues={{ username: "", password: "" }}
                     onSubmit={handleSubmit}
                 >
                     {({ values, handleChange, handleSubmit }) => (
                         <View style={{ padding: 5, gap: 10 }}>
                             <View style={{ marginHorizontal: 15, paddingHorizontal: 25, borderBottomWidth: 1, position: 'relative', borderBottomColor: tetik ? 'lightblue' : 'white' }}>
-                                <TextInput cursorColor={'white'} placeholderTextColor={tetik ? 'lightblue' : 'white'} style={{ fontWeight: 'bold' }} placeholder='example@username' onFocus={() => handleFocus(1)} onBlur={() => handleBlur(1)}></TextInput>
+                                <TextInput value={values.username} onChangeText={handleChange('username')} cursorColor={'white'} placeholderTextColor={tetik ? 'lightblue' : 'white'} style={{ fontWeight: 'bold' }} placeholder='example@username' onFocus={() => handleFocus(1)} onBlur={() => handleBlur(1)}></TextInput>
                                 <View style={{ position: 'absolute', height: '100%', justifyContent: 'center' }}>
                                     <Icon name="email" size={24} color={tetik ? 'lightblue' : 'white'} />
                                 </View>
@@ -65,7 +82,7 @@ const LoginScreen = (props: Props) => {
 
                             </View>
                             <View style={{ marginHorizontal: 15, paddingHorizontal: 25, borderBottomWidth: 1, position: 'relative', borderBottomColor: tetik2 ? 'lightblue' : 'white' }}>
-                                <TextInput placeholderTextColor={tetik2 ? 'lightblue' : 'white'} style={{ fontWeight: 'bold' }} placeholder='example@username' onFocus={() => handleFocus(0)} onBlur={() => handleBlur(0)}></TextInput>
+                                <TextInput value={values.password} onChangeText={handleChange('password')} placeholderTextColor={tetik2 ? 'lightblue' : 'white'} style={{ fontWeight: 'bold' }} placeholder='example@username' onFocus={() => handleFocus(0)} onBlur={() => handleBlur(0)}></TextInput>
                                 <View style={{ position: 'absolute', height: '100%', justifyContent: 'center' }}>
                                     <Icon name="password" size={24} color={tetik2 ? 'lightblue' : 'white'} />
                                 </View>
@@ -74,7 +91,7 @@ const LoginScreen = (props: Props) => {
                                 </View>
                             </View>
                             <View>
-                                <CustomButton theme='secondary' title='Log In'></CustomButton>
+                                <CustomButton theme='secondary' title='Log In' customPress={() => handleSubmit()}></CustomButton>
                                 <View style={{ alignSelf: 'center', paddingVertical: 15 }}>
                                     <Text style={{ fontWeight: 'bold' }}>OR</Text>
                                 </View>

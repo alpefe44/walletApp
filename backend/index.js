@@ -3,6 +3,7 @@ import bodyParser from 'body-parser'
 import { User } from './user.js';
 import bcrypt from 'bcrypt'
 import { connectToDatabase } from './expressmongodb.js';
+import cors from 'cors'
 
 
 const app = express();
@@ -12,11 +13,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
 
-const mongoUrl = 'mongodb://localhost:27017';
+
+//const mongoUrl = 'mongodb://localhost:27017';
 
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
-    console.log(username, password)
+
 
     try {
         const existingUser = await User.findOne({ username })
@@ -40,20 +42,28 @@ app.post('/register', async (req, res) => {
 })
 
 app.post('/login', async (req, res) => {
+
     const { username, password } = req.body;
 
     try {
-        const user = await User.findOne({ username })
+        const existingUser = await User.findOne({ username })
+        console.log(existingUser)
+        if (existingUser && existingUser.username === username && existingUser.password === password) {
+            res.status(201).json({
+                username: existingUser.username,
+                password: existingUser.password,
+            }
+        )
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ error: 'Kullanıcı veya şifre hatalı' })
+        } else {
+            res.status(400).json({ error: 'Kullanıcı kayıtsız' })
         }
 
-        res.json({ message: 'Giriş Başarılı' })
     } catch (error) {
-        console.error('Giriş hatası:', error.message);
+        console.error('Kayıt hatası:', error.message);
         res.status(500).json({ error: 'Sunucu hatası' });
     }
+
 })
 
 

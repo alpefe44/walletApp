@@ -28,7 +28,7 @@ const HomeScreen = (props: Props) => {
     const [visible2, setVisible2] = React.useState<boolean>(false)
     const [textInputValue, setTextInputValue] = React.useState<string>("")
 
-
+    const user = useAppSelector((state) => state.profile.profile);
     const dataList = useAppSelector((state) => state.data.data);
     const price = useAppSelector((state) => state.PriceManagement.price)
     const wallet = useAppSelector((state) => state.management.items);
@@ -40,6 +40,7 @@ const HomeScreen = (props: Props) => {
     })
 
 
+    console.log(user , "homescreenn")
     function WalletScreen() {
         return (
 
