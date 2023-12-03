@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../util/Redux/hook'
 import { addItem, deleteItem } from '../util/Redux/management'
 import 'react-native-gesture-handler'
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { saveItem } from '../util/DatabaseActions/databaseactions'
 
 
 type Props = {
@@ -15,7 +16,8 @@ type Props = {
 }
 
 const WalletItem = (props: Props) => {
-    
+
+    const user = useAppSelector((state) => state.profile.profile)
     const dispatch = useAppDispatch();
 
     const renderRightActions = () => {
@@ -28,12 +30,19 @@ const WalletItem = (props: Props) => {
         )
     }
 
+    const saveData = async () => {
+        const saveData = await saveItem({
+            id: "kullanici123",
+            data: props.item
+        })
+    }
 
     return (
         <GestureHandlerRootView>
             <Swipeable renderRightActions={props.isItem ? undefined : renderRightActions}>
                 <Pressable onPress={() => {
-                    props.isItem ? dispatch(addItem(props.item)) : undefined
+                    // props.isItem ? dispatch(addItem(props.item)) : undefined
+                    saveData()
                 }} style={{ marginHorizontal: 22, justifyContent: 'space-between', flexDirection: 'row', borderWidth: 5, borderColor: props.isItem ? props.enabledItems.findIndex((item) => item === props.item.name) >= 0 ? 'green' : 'white' : Colors.background2, padding: 4, backgroundColor: Colors.background2, borderTopLeftRadius: 10, borderBottomRightRadius: 10, marginVertical: 10, elevation: 10 }}>
                     <View style={{ flexDirection: 'row', gap: 10 }}>
                         <View style={{ width: 80, height: 80 }}>

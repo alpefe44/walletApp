@@ -4,6 +4,7 @@ import { User } from './user.js';
 import bcrypt from 'bcrypt'
 import { connectToDatabase } from './expressmongodb.js';
 import cors from 'cors'
+import { Wallet } from './wallet.js';
 
 
 const app = express();
@@ -53,7 +54,7 @@ app.post('/login', async (req, res) => {
                 username: existingUser.username,
                 password: existingUser.password,
             }
-        )
+            )
 
         } else {
             res.status(400).json({ error: 'Kullanıcı kayıtsız' })
@@ -65,6 +66,28 @@ app.post('/login', async (req, res) => {
     }
 
 })
+
+
+app.post('/savedata', async (req, res) => {
+    const { id, data } = req.body;
+    console.log(data)
+    try {
+        const existingUser = await User.findOne({ username: "kullanici123" })
+
+        if (existingUser && data) {
+            const newWallet = new Wallet({
+                username: id,
+                ...data
+            })
+            await newWallet.save();
+        } else {
+            res.status(400).json({message : "Hatalı Kullanıcı"})
+        }
+    } catch (error) {
+
+    }
+})
+
 
 
 app.listen(port, () => {

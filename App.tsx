@@ -10,7 +10,7 @@ type Props = {}
 const App = (props: Props) => {
   return (
     <Provider store={store}>
-      <LoginScreen></LoginScreen>
+      <HomeScreen></HomeScreen>
     </Provider>
   )
 }
