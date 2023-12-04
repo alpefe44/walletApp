@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createSlice , createAsyncThunk } from '@reduxjs/toolkit'
 import type { RootState } from './store'
+
+
 
 
 
@@ -11,6 +12,8 @@ interface ManagementState {
 const initialState: ManagementState = {
     items: []
 }
+
+
 
 
 export const ManagementSlice = createSlice({
@@ -32,6 +35,10 @@ export const ManagementSlice = createSlice({
             const { name } = action.payload;
             const newArr = state.items.filter((item) => item.name !== name)
             state.items = newArr
+        },
+
+        setItem: (state, action) => {
+            state.items = [...action.payload]
         }
     }
 })
@@ -39,7 +46,7 @@ export const ManagementSlice = createSlice({
 
 
 
-export const { addItem, deleteItem } = ManagementSlice.actions;
+export const { addItem, deleteItem , setItem } = ManagementSlice.actions;
 
 export const managementState = (state: RootState) => state.management.items
 

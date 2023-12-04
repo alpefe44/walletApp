@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
+import React from 'react'
 import Icon from 'react-native-vector-icons/Entypo'
-
+import { fetchItems } from '../util/Redux/apiSlice'
 
 
 
@@ -12,18 +12,20 @@ import WalletItem from '../Components/WalletItem'
 import data from '../data/data'
 import CustomModal from '../Modal/CustomModal'
 
-import { useAppSelector } from '../util/Redux/hook'
+import { useAppDispatch, useAppSelector } from '../util/Redux/hook'
 import AddModal from '../Modal/AddModal'
-
-type Props = {}
-
-const HomeScreen = (props: Props) => {
-
-    var totalPrice: number = 0;
+import { getItems } from '../util/DatabaseActions/databaseactions'
+import { setItem } from '../util/Redux/management'
+import { editPrice, editTotalPrice } from '../util/Redux/pricemanagement'
 
 
 
+const HomeScreen = () => {
+
+
+    const dispatch = useAppDispatch();
     const [click, setClick] = React.useState<string>("wallet");
+
     const [visible, setVisible] = React.useState<boolean>(false)
     const [visible2, setVisible2] = React.useState<boolean>(false)
     const [textInputValue, setTextInputValue] = React.useState<string>("")
@@ -31,33 +33,75 @@ const HomeScreen = (props: Props) => {
     const user = useAppSelector((state) => state.profile.profile);
     const dataList = useAppSelector((state) => state.data.data);
     const price = useAppSelector((state) => state.PriceManagement.price)
-    const wallet = useAppSelector((state) => state.management.items);
-    const walletNames = useAppSelector((state) => state.management.items).map((item) => {
-        return item.name
-    })
-    const newPrices = useAppSelector((state) => state.management.items).map((item) => {
-        return item.price
-    })
+    const totalPrice = useAppSelector((state) => state.PriceManagement.totalPrice)
 
 
-    console.log(user , "homescreenn")
+
+
     function WalletScreen() {
+
+
+        //let totalPricee: number = 0;
+        const newTry = useAppSelector((state) => state.api.items)
+        const [loading, setLoading] = React.useState(false)
+
+
+
+
+        // const newPrices = data?.map((item) => {
+        //     return item.price
+        // })
+
+        // newPrices.forEach(function (number) {
+        //     totalPricee += number;
+        //     dispatch(editTotalPrice(totalPricee))
+        // })
+
+        // const getData = async () => {
+        //     setLoading(true)
+        //     const response = await getItems(user.username);
+        //     if (response) {
+        //         setLoading(false)
+        //         setData(response)
+        //     }
+        // }
+
+        // React.useEffect(() => {
+        //     getData();
+        // }, [])
+
+        React.useEffect(() => {
+
+            const getData = async () => {
+                try {
+                    setLoading(true);
+                    dispatch(fetchItems(user.username))
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+
+            getData();
+        }, [dispatch]); // useEffect bağımlılıkları eklenmeli
+
         return (
 
             <ScrollView showsVerticalScrollIndicator={false} style={walletScreen.container}>
-
                 {
-                    wallet.map((item: any, index: any) => <WalletItem key={index} isItem={false} item={item}></WalletItem>)
+                    loading ? <ActivityIndicator size={'large'} color={'white'}></ActivityIndicator> : newTry?.map((item: any, index: any) => <WalletItem key={index} isItem={false} item={item}></WalletItem>)
+
                 }
-
-
-
             </ScrollView >
 
         )
     }
 
     function ProductScreen() {
+        const walletNames = useAppSelector((state) => state.api.items).map((item) => {
+            return item.name
+        })
         return (
             <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                 {
@@ -67,10 +111,6 @@ const HomeScreen = (props: Props) => {
         )
     }
 
-
-    newPrices.forEach(function (number, index) {
-        totalPrice += number;
-    })
 
 
     return (

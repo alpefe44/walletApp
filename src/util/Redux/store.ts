@@ -3,13 +3,15 @@ import ManagementSlice from "./management";
 import PriceManagement from "./pricemanagement";
 import dataReducer from './dataSlice'
 import userSlice from "./userSlice";
+import apiSlice from "./apiSlice";
 
 export const store = configureStore({
     reducer: {
         management: ManagementSlice,
         PriceManagement: PriceManagement,
         data: dataReducer,
-        profile: userSlice
+        profile: userSlice,
+        api: apiSlice,
     },
 })
 

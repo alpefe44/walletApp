@@ -70,25 +70,49 @@ app.post('/login', async (req, res) => {
 
 app.post('/savedata', async (req, res) => {
     const { id, data } = req.body;
-    console.log(data)
+    console.log(id, "id")
     try {
-        const existingUser = await User.findOne({ username: "kullanici123" })
+        const existingUser = await User.findOne({ username: id })
+        const existingData = await Wallet.findOne({ name: data.name, username: id })
 
-        if (existingUser && data) {
+        if (existingUser && data && !existingData) {
             const newWallet = new Wallet({
                 username: id,
                 ...data
             })
             await newWallet.save();
+            res.status(201).json(newWallet)
         } else {
-            res.status(400).json({message : "Hatalı Kullanıcı"})
+            res.status(400).json({ message: "Hatalı Kullanıcı" })
         }
     } catch (error) {
 
     }
 })
 
+app.get('/getdata/:username', async (req, res) => {
+    const { username } = req.params;
+    console.log(username)
+    try {
+        // Veritabanı sorgusu
+        const getDataByUsername = await Wallet.find({ username });
 
+        // Veritabanından gelen veriyi kontrol et
+        console.log(getDataByUsername, "getdata username");
+
+        // Hata olup olmadığını kontrol et
+        if (!getDataByUsername) {
+            return res.status(404).json({ message: "Kullanıcı bulunamadı" });
+        }
+
+        // Başarılı durumda veriyi geri gönder
+        res.status(200).json(getDataByUsername);
+
+    } catch (error) {
+        console.error(error); // Hata durumunda hatayı konsola yazdır
+        res.status(500).json({ message: "Sunucu hatası" });
+    }
+})
 
 app.listen(port, () => {
     connectToDatabase();

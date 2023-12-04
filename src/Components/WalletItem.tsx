@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, TouchableOpacity } from 'react-native'
+import { View, Text, Image, Pressable, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/Entypo'
 import { Colors } from '../Colors'
@@ -18,6 +18,9 @@ type Props = {
 const WalletItem = (props: Props) => {
 
     const user = useAppSelector((state) => state.profile.profile)
+    const [enabledData, setEnabledData] = React.useState(props.enabledItems)
+    const [borderColor, setBorderColor] = React.useState(props.isItem ? 'white' : Colors.background2);
+    const [loading, setLoading] = React.useState<boolean>(false)
     const dispatch = useAppDispatch();
 
     const renderRightActions = () => {
@@ -28,33 +31,50 @@ const WalletItem = (props: Props) => {
                 </View>
             </TouchableOpacity>
         )
+
     }
 
     const saveData = async () => {
-        const saveData = await saveItem({
-            id: "kullanici123",
+        setLoading(true)
+        const data = await saveItem({
+            id: user.username,
             data: props.item
         })
+        setLoading(false)
+        setBorderColor('green');
+
+
     }
 
+    React.useEffect(() => {
+        // Her enabledData değiştiğinde, border rengini güncelle
+        setBorderColor(enabledData?.findIndex((item) => item === props.item.name) >= 0 ? 'green' : 'white');
+    }, [enabledData, props.item.name]);
+
+
+
     return (
+
         <GestureHandlerRootView>
-            <Swipeable renderRightActions={props.isItem ? undefined : renderRightActions}>
-                <Pressable onPress={() => {
-                    // props.isItem ? dispatch(addItem(props.item)) : undefined
-                    saveData()
-                }} style={{ marginHorizontal: 22, justifyContent: 'space-between', flexDirection: 'row', borderWidth: 5, borderColor: props.isItem ? props.enabledItems.findIndex((item) => item === props.item.name) >= 0 ? 'green' : 'white' : Colors.background2, padding: 4, backgroundColor: Colors.background2, borderTopLeftRadius: 10, borderBottomRightRadius: 10, marginVertical: 10, elevation: 10 }}>
-                    <View style={{ flexDirection: 'row', gap: 10 }}>
-                        <View style={{ width: 80, height: 80 }}>
-                            <Image style={{ flex: 1, resizeMode: 'stretch' }} source={{ uri: props.item.image }}></Image>
-                        </View>
-                        <Text style={{ fontWeight: 'bold', color: 'black' }}>{props.item.name}</Text>
-                    </View>
-                    <View style={{ alignSelf: 'flex-end' }}>
-                        <Text style={{ fontWeight: 'bold', color: 'black' }}>{props.item.price}₺</Text>
-                    </View>
-                </Pressable>
-            </Swipeable>
+            {
+                loading ? <ActivityIndicator size={'large'} color={'white'}></ActivityIndicator> : (
+                    <Swipeable renderRightActions={props.isItem ? undefined : renderRightActions}>
+                        <Pressable onPress={() => {
+                            saveData()
+                        }} style={{ marginHorizontal: 22, justifyContent: 'space-between', flexDirection: 'row', borderWidth: 5, borderColor: borderColor, padding: 4, backgroundColor: Colors.background2, borderTopLeftRadius: 10, borderBottomRightRadius: 10, marginVertical: 10, elevation: 10 }}>
+                            <View style={{ flexDirection: 'row', gap: 10 }}>
+                                <View style={{ width: 80, height: 80 }}>
+                                    <Image style={{ flex: 1, resizeMode: 'stretch' }} source={{ uri: props.item.image }}></Image>
+                                </View>
+                                <Text style={{ fontWeight: 'bold', color: 'black' }}>{props.item.name}</Text>
+                            </View>
+                            <View style={{ alignSelf: 'flex-end' }}>
+                                <Text style={{ fontWeight: 'bold', color: 'black' }}>{props.item.price}₺</Text>
+                            </View>
+                        </Pressable>
+                    </Swipeable>)
+            }
+
         </GestureHandlerRootView>
     )
 }

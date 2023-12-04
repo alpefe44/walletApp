@@ -6,13 +6,17 @@ import CustomButton from '../Components/CustomButton/CustomButton';
 import { fetchLogin } from '../util/DatabaseActions/databaseactions';
 import { useAppDispatch, useAppSelector } from '../util/Redux/hook';
 import { addUser } from '../util/Redux/userSlice';
-
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStack } from '../Navigation/Router';
 
 type Props = {}
 
 const { width, height } = Dimensions.get('window');
 
 const LoginScreen = (props: Props) => {
+
+    const navigation = useNavigation<NativeStackNavigationProp<RootStack>>()
 
     const [page, setPage] = React.useState(0);
     const [data, setData] = React.useState<object>({})
@@ -32,14 +36,15 @@ const LoginScreen = (props: Props) => {
             if (response) {
                 setData(response)
                 dispatch(addUser(response))
+                navigation.replace('HomeScreen');
             }
         }
 
 
         React.useEffect(() => {
             console.log(data, "data")
-            console.log(user , "user")
-        }, [data , user])
+            console.log(user, "user")
+        }, [data, user])
 
 
         const [tetik, setTetik] = React.useState(false);
