@@ -3,10 +3,12 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/Entypo'
 import { Colors } from '../Colors'
 import { useAppDispatch, useAppSelector } from '../util/Redux/hook'
-import { addItem, deleteItem } from '../util/Redux/management'
 import 'react-native-gesture-handler'
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { saveItem } from '../util/DatabaseActions/databaseactions'
+import { saveItem, deleteItem } from '../util/DatabaseActions/databaseactions'
+import { fetchItems } from '../util/Redux/apiSlice'
+
+
 
 
 type Props = {
@@ -23,9 +25,10 @@ const WalletItem = (props: Props) => {
     const [loading, setLoading] = React.useState<boolean>(false)
     const dispatch = useAppDispatch();
 
+
     const renderRightActions = () => {
         return (
-            <TouchableOpacity style={{ alignSelf: 'center', marginRight: 3 }} onPress={() => dispatch(deleteItem(props.item))}>
+            <TouchableOpacity style={{ alignSelf: 'center', marginRight: 3 }} onPress={() => deleteData(props.item.name, user?.username)}>
                 <View style={{ width: 80, height: 80, alignItems: 'center', justifyContent: 'center', backgroundColor: '#ff5959', borderRadius: 15 }}>
                     <Icon name="trash" size={24} color="white" />
                 </View>
@@ -34,16 +37,24 @@ const WalletItem = (props: Props) => {
 
     }
 
+    const deleteData = async (name: string, username: string) => {
+        setLoading(true)
+        const deleteitem = await deleteItem(name, username)
+        if (deleteitem) {
+            await dispatch(fetchItems(user.username))
+            setLoading(false)
+            console.log("silindi")
+        }
+    }
+
     const saveData = async () => {
         setLoading(true)
         const data = await saveItem({
-            id: user.username,
+            id: user?.username,
             data: props.item
         })
         setLoading(false)
         setBorderColor('green');
-
-
     }
 
     React.useEffect(() => {
@@ -60,7 +71,7 @@ const WalletItem = (props: Props) => {
                 loading ? <ActivityIndicator size={'large'} color={'white'}></ActivityIndicator> : (
                     <Swipeable renderRightActions={props.isItem ? undefined : renderRightActions}>
                         <Pressable onPress={() => {
-                            saveData()
+                            props.isItem ? saveData() : undefined
                         }} style={{ marginHorizontal: 22, justifyContent: 'space-between', flexDirection: 'row', borderWidth: 5, borderColor: borderColor, padding: 4, backgroundColor: Colors.background2, borderTopLeftRadius: 10, borderBottomRightRadius: 10, marginVertical: 10, elevation: 10 }}>
                             <View style={{ flexDirection: 'row', gap: 10 }}>
                                 <View style={{ width: 80, height: 80 }}>

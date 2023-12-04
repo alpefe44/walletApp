@@ -1,12 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getItems } from '../DatabaseActions/databaseactions'; // Bu dosyada API çağrılarınızı gerçekleştiren bir modül bulunmalıdır
+import { getItems, deleteItem } from '../DatabaseActions/databaseactions'; // Bu dosyada API çağrılarınızı gerçekleştiren bir modül bulunmalıdır
+import { useDispatch } from 'react-redux';
 
 // Asenkron işlemi tanımla
-export const fetchItems = createAsyncThunk('data/fetchItems', async (username : string) => {
+export const fetchItems = createAsyncThunk('data/fetchItems', async (username: string) => {
     const response = await getItems(username);
     //console.log(response)
     return response; // response.data değil, tüm response'ı kullanıyoruz
 });
+
+
+
 
 // Slice'ı tanımla
 const dataSlice = createSlice({
@@ -26,6 +30,8 @@ const dataSlice = createSlice({
             .addCase(fetchItems.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.items = action.payload; // action.payload içinde response var
+
+             
             })
             .addCase(fetchItems.rejected, (state, action) => {
                 state.status = 'failed';

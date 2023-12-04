@@ -22,7 +22,6 @@ import { editPrice, editTotalPrice } from '../util/Redux/pricemanagement'
 
 const HomeScreen = () => {
 
-
     const dispatch = useAppDispatch();
     const [click, setClick] = React.useState<string>("wallet");
 
@@ -34,57 +33,30 @@ const HomeScreen = () => {
     const dataList = useAppSelector((state) => state.data.data);
     const price = useAppSelector((state) => state.PriceManagement.price)
     const totalPrice = useAppSelector((state) => state.PriceManagement.totalPrice)
-
+    const [deneme, setDeneme] = React.useState(0)
 
 
 
     function WalletScreen() {
 
 
-        //let totalPricee: number = 0;
-        const newTry = useAppSelector((state) => state.api.items)
         const [loading, setLoading] = React.useState(false)
-
-
-
-
-        // const newPrices = data?.map((item) => {
-        //     return item.price
-        // })
-
-        // newPrices.forEach(function (number) {
-        //     totalPricee += number;
-        //     dispatch(editTotalPrice(totalPricee))
-        // })
-
-        // const getData = async () => {
-        //     setLoading(true)
-        //     const response = await getItems(user.username);
-        //     if (response) {
-        //         setLoading(false)
-        //         setData(response)
-        //     }
-        // }
-
-        // React.useEffect(() => {
-        //     getData();
-        // }, [])
+        const newTry = useAppSelector((state) => state.api.items)
+        const totalPrice = newTry.map((item) => item.price);
 
         React.useEffect(() => {
-
             const getData = async () => {
                 try {
                     setLoading(true);
-                    dispatch(fetchItems(user.username))
+                    await dispatch(fetchItems(user.username))
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 } finally {
                     setLoading(false);
                 }
             }
-
             getData();
-        }, [dispatch]); // useEffect bağımlılıkları eklenmeli
+        }, []); // useEffect bağımlılıkları eklenmeli
 
         return (
 

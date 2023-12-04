@@ -114,6 +114,23 @@ app.get('/getdata/:username', async (req, res) => {
     }
 })
 
+app.delete('/deletedata/:name/:username', async (req, res) => {
+    try {
+        const { name, username } = req.params;
+        // Mongoose'daki remove veya deleteOne fonksiyonunu kullanarak belirtilen ID'ye sahip belgeyi silin
+        const result = await Wallet.deleteOne({ name, username });
+        console.log(result)
+
+        if (result.deletedCount === 1) {
+            res.status(200).json({ success: true, message: 'Belge başarıyla silindi' });
+        } else {
+            res.status(404).json({ success: false, message: 'Belge bulunamadı' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Silme işlemi sırasında bir hata oluştu', error: error.message });
+    }
+});
+
 app.listen(port, () => {
     connectToDatabase();
     console.log('Sunucu calıstı')
