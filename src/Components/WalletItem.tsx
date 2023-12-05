@@ -75,7 +75,7 @@ const WalletItem = (props: Props) => {
                 loading ? <ActivityIndicator size={'large'} color={'white'}></ActivityIndicator> : (
                     <Swipeable renderRightActions={props.isItem ? undefined : renderRightActions}>
                         <Pressable onPress={() => {
-                            props.isItem ? saveData() : undefined
+                            props.isItem && borderColor === 'white' ? saveData() : undefined
                         }} style={{ marginHorizontal: 22, justifyContent: 'space-between', flexDirection: 'row', borderWidth: 5, borderColor: borderColor, padding: 4, backgroundColor: Colors.background2, borderTopLeftRadius: 10, borderBottomRightRadius: 10, marginVertical: 10, elevation: 10 }}>
                             <View style={{ flexDirection: 'row', gap: 10 }}>
                                 <View style={{ width: 80, height: 80 }}>
