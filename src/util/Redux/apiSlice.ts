@@ -20,6 +20,7 @@ const dataSlice = createSlice({
         items: [],
         status: 'idle',
         error: null,
+        price : 0
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -31,6 +32,9 @@ const dataSlice = createSlice({
                 state.status = 'succeeded';
                 state.items = action.payload; // action.payload içinde response var
 
+                const newPrice = state.items.reduce((sum, item) => sum + item.price, 0);
+                state.price = newPrice
+            
              
             })
             .addCase(fetchItems.rejected, (state, action) => {

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Icon from 'react-native-vector-icons/Entypo'
 import { fetchItems } from '../util/Redux/apiSlice'
 
@@ -32,8 +32,9 @@ const HomeScreen = () => {
     const user = useAppSelector((state) => state.profile.profile);
     const dataList = useAppSelector((state) => state.data.data);
     const price = useAppSelector((state) => state.PriceManagement.price)
-    const totalPrice = useAppSelector((state) => state.PriceManagement.totalPrice)
-    const [deneme, setDeneme] = React.useState(0)
+    //const [totalPrice, setTotalPrice] = React.useState(0);
+    const totalPrice = useAppSelector((state) => state.api.price)
+
 
 
 
@@ -41,11 +42,15 @@ const HomeScreen = () => {
 
 
         const [loading, setLoading] = React.useState(false)
-        const newTry = useAppSelector((state) => state.api.items)
-        const totalPrice = newTry.map((item) => item.price);
+        const newTry = useAppSelector((state) => state.api.items);
+
+        // const calculateTotalPrice = () => {
+        //     return newTry.reduce((sum, item) => sum + item.price, 0);
+        // };
 
         React.useEffect(() => {
             const getData = async () => {
+                console.log("bura calistike")
                 try {
                     setLoading(true);
                     await dispatch(fetchItems(user.username))
@@ -56,6 +61,7 @@ const HomeScreen = () => {
                 }
             }
             getData();
+            //setTotalPrice(calculateTotalPrice());
         }, []); // useEffect bağımlılıkları eklenmeli
 
         return (
@@ -63,7 +69,6 @@ const HomeScreen = () => {
             <ScrollView showsVerticalScrollIndicator={false} style={walletScreen.container}>
                 {
                     loading ? <ActivityIndicator size={'large'} color={'white'}></ActivityIndicator> : newTry?.map((item: any, index: any) => <WalletItem key={index} isItem={false} item={item}></WalletItem>)
-
                 }
             </ScrollView >
 

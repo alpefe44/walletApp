@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
+    console.log(username, password)
 
 
     try {
@@ -28,13 +29,21 @@ app.post('/register', async (req, res) => {
             return res.status(400).json({ error: "Bu kullanıcı adı kullanılamaz !" })
         }
 
-        const newUser = new User({
-            username,
-            password
-        });
-        await newUser.save();
+        if (username.length > 5 && password.length > 8) {
+            const newUser = new User({
+                username,
+                password
+            });
+            await newUser.save();
+            return res.status(201).json({
+                username: username,
+                password: password
+            })
+        } else {
+            return res.status(401).json({ error: "KISA!" })
+        }
 
-        res.status(201).json({ message: "Kullanıcı başarıyla kaydedildi" })
+
     } catch (error) {
         console.error('Kayıt hatası:', error.message);
         res.status(500).json({ error: 'Sunucu hatası' });

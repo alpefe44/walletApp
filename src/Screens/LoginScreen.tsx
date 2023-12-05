@@ -1,9 +1,9 @@
-import { View, Text, ImageBackground, Dimensions, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, ImageBackground, Dimensions, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native'
 import React from 'react'
 import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CustomButton from '../Components/CustomButton/CustomButton';
-import { fetchLogin } from '../util/DatabaseActions/databaseactions';
+import { fetchLogin, register } from '../util/DatabaseActions/databaseactions';
 import { useAppDispatch, useAppSelector } from '../util/Redux/hook';
 import { addUser } from '../util/Redux/userSlice';
 import { useNavigation } from '@react-navigation/native'
@@ -19,6 +19,7 @@ const LoginScreen = (props: Props) => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStack>>()
 
     const [page, setPage] = React.useState(0);
+    const [chooseSubmit, setchoosesubmit] = React.useState(0)
     const [data, setData] = React.useState<object>({})
     const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.profile.profile);
@@ -28,6 +29,7 @@ const LoginScreen = (props: Props) => {
 
         async function handleSubmit(values: any) {
 
+            console.log("loginsubmit")
             const response = await fetchLogin({
                 username: values.username,
                 password: values.password
@@ -37,6 +39,31 @@ const LoginScreen = (props: Props) => {
                 setData(response)
                 dispatch(addUser(response))
                 navigation.replace('HomeScreen');
+            } else {
+                Alert.alert("Kullanıcı yok yeni kullanıcı oluştur!!!")
+            }
+        }
+
+        async function handleSubmit2(values: any) {
+
+            console.log("registersubmit")
+            const response = await register({
+                username: values.username,
+                password: values.password
+            })
+            console.log(response, "response")
+            if (values.password.length > 8 && values.username.length > 5) {
+                if (response) {
+                    setData(response)
+                    dispatch(addUser(response))
+                    Alert.alert("Kullanıcı kayıt edildi")
+                    navigation.replace('HomeScreen');
+                }else {
+                    Alert.alert("Kullanıcı adı kullanılıyor !!")
+                }
+            }
+            else {
+                Alert.alert("Şifre en az 8 karakterli olmalı ve kullanıcı adı 5 karakterli olmalı!!!")
             }
         }
 
@@ -72,9 +99,12 @@ const LoginScreen = (props: Props) => {
             <View style={{ height: height * .4 }}>
                 <Formik
                     initialValues={{ username: "", password: "" }}
-                    onSubmit={handleSubmit}
+                    onSubmit={(values) => {
+                        handleSubmit(values),
+                            handleSubmit2(values)
+                    }}
                 >
-                    {({ values, handleChange, handleSubmit }) => (
+                    {({ values, handleChange }) => (
                         <View style={{ padding: 5, gap: 10 }}>
                             <View style={{ marginHorizontal: 15, paddingHorizontal: 25, borderBottomWidth: 1, position: 'relative', borderBottomColor: tetik ? 'lightblue' : 'white' }}>
                                 <TextInput value={values.username} onChangeText={handleChange('username')} cursorColor={'white'} placeholderTextColor={tetik ? 'lightblue' : 'white'} style={{ fontWeight: 'bold' }} placeholder='example@username' onFocus={() => handleFocus(1)} onBlur={() => handleBlur(1)}></TextInput>
@@ -87,7 +117,7 @@ const LoginScreen = (props: Props) => {
 
                             </View>
                             <View style={{ marginHorizontal: 15, paddingHorizontal: 25, borderBottomWidth: 1, position: 'relative', borderBottomColor: tetik2 ? 'lightblue' : 'white' }}>
-                                <TextInput value={values.password} onChangeText={handleChange('password')} placeholderTextColor={tetik2 ? 'lightblue' : 'white'} style={{ fontWeight: 'bold' }} placeholder='example@username' onFocus={() => handleFocus(0)} onBlur={() => handleBlur(0)}></TextInput>
+                                <TextInput secureTextEntry={true} value={values.password} onChangeText={handleChange('password')} placeholderTextColor={tetik2 ? 'lightblue' : 'white'} style={{ fontWeight: 'bold' }} placeholder='example@password' onFocus={() => handleFocus(0)} onBlur={() => handleBlur(0)}></TextInput>
                                 <View style={{ position: 'absolute', height: '100%', justifyContent: 'center' }}>
                                     <Icon name="password" size={24} color={tetik2 ? 'lightblue' : 'white'} />
                                 </View>
@@ -96,11 +126,11 @@ const LoginScreen = (props: Props) => {
                                 </View>
                             </View>
                             <View>
-                                <CustomButton theme='secondary' title='Log In' customPress={() => handleSubmit()}></CustomButton>
+                                <CustomButton theme='secondary' title='Log In' customPress={() => handleSubmit(values)}></CustomButton>
                                 <View style={{ alignSelf: 'center', paddingVertical: 15 }}>
                                     <Text style={{ fontWeight: 'bold' }}>OR</Text>
                                 </View>
-                                <CustomButton theme='primary' title='Sign Up'></CustomButton>
+                                <CustomButton theme='primary' title='Sign Up' customPress={() => handleSubmit2(values)}></CustomButton>
                             </View>
                         </View>
                     )}

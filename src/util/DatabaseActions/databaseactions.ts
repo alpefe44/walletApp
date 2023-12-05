@@ -18,6 +18,16 @@ export const fetchLogin = async (data: object) => {
 }
 
 
+export const register = async (data: object) => {
+    try {
+        const response = await axios.post("http://192.168.1.105:3000/register", data)
+        return response.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
 export const saveItem = async (data: any) => {
     try {
         const response = await axios.post("http://192.168.1.105:3000/savedata", data)

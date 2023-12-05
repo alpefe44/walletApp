@@ -53,8 +53,12 @@ const WalletItem = (props: Props) => {
             id: user?.username,
             data: props.item
         })
-        setLoading(false)
-        setBorderColor('green');
+        if (data) {
+            await dispatch(fetchItems(user.username))
+            setLoading(false)
+            setBorderColor('green');
+        }
+
     }
 
     React.useEffect(() => {
