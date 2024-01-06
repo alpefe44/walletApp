@@ -7,4 +7,4 @@
 
 Kullanıcının mevcut ürünleri cüzdanına ekleyip tutarını görebildiği ve ekstradan fotoğraf ya da fotoğrafsız bir şekilde istediği bir fatura bilgisini ekleyebildiği bir proje.
 Veriler local de değil bir database ile tutulduğundan veriler kalıcı olarak kalıyor ve kullanıcı girdiğinde tutarını her seferinde görüp güncelleyebiliyor.
-API'yi proje dosyalarından çıkardım fazlalık olmasından ötürü onun yazımı da bana ait.
+API'yi proje dosyalarından çıkardım fazlalık olmasından ötürü onun yazımı da bana ait..
